@@ -15,6 +15,8 @@ namespace IT4483Image.Models
         public string Link { get; set; }
         public float Longitude { get; set; }
         public float Latitude { get; set; }
+        public int Subjects { get; set; }
+        public int Location { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedAt { get; set; }
 

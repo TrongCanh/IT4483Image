@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IT4483Image.Models;
 using IT4483Image.DTO;
+using System.Reflection;
 
 namespace IT4483Image.Controllers
 {
@@ -51,10 +52,16 @@ namespace IT4483Image.Controllers
 
         [HttpPost]
         [Route("search-image-video")]
-        public async Task<ActionResult<IEnumerable<Record>>> searchRecords(RecordDTO recordDTO)
+        public async Task<ActionResult<ResponseDTO>> searchRecords(RecordDTO recordDTO, int skip, int take)
         {
 
-            return await _context.Records.Where(s => s.Type==recordDTO.Type && s.Title.Contains(recordDTO.Title)).ToArrayAsync();
+            return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => ( recordDTO.Type==null || s.Type==recordDTO.Type)
+                                && (recordDTO.Title == null || s.Title.Contains(recordDTO.Title))
+                                && (recordDTO.Location == null || s.Location == recordDTO.Location)
+                                && (recordDTO.Subjects == null || s.Type == recordDTO.Subjects)
+                                && (recordDTO.start == null || s.CreatedAt >= recordDTO.start)
+                                && (recordDTO.end == null || s.CreatedAt <= recordDTO.end)
+                                ).Skip(skip).Take(take).ToArrayAsync());
         }
 
 
@@ -64,7 +71,8 @@ namespace IT4483Image.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ResponseDTO>> PutRecord(long id, Record record)
         {
-            record.Id = id;
+            var recordOld = await _context.Records.FindAsync(id);
+            record.Id = recordOld.Id;
 
             _context.Entry(record).State = EntityState.Modified;
 
@@ -97,6 +105,34 @@ namespace IT4483Image.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRecord", new { id = record.Id }, record);
+        }
+
+
+        /// <summary>
+        /// Sao chép giá trị đối tượng, nếu đối tượng cần sao chép không có trường đó thì bỏ qua
+        /// </summary>
+        /// <typeparam name="T">object</typeparam>
+        /// <param name="sourceObject">Đầu vào bản cần sao chép</param>
+        /// <param name="destObject">Đối tượng cần lấy sau khi sao chép</param>
+        /// Created by: BVMINH (24/08/2020)
+        public static void CopyObject<T>(object sourceObject, ref T destObject)
+        {
+            if (sourceObject == null || destObject == null)
+            {
+                return;
+            }
+            Type sourceType = sourceObject.GetType();
+            Type targetType = destObject.GetType();
+            foreach (PropertyInfo p in sourceType.GetProperties())
+            {
+                //  Get the matching property in the destination object
+                PropertyInfo targetObj = targetType.GetProperty(p.Name);
+                //  If there is none, skip
+                if (targetObj == null)
+                    continue;
+                //set value
+                targetObj.SetValue(destObject, p.GetValue(sourceObject, null), null);
+            }
         }
 
         // DELETE: api/Records/5

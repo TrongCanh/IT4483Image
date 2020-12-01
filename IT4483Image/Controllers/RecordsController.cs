@@ -26,7 +26,7 @@ namespace IT4483Image.Controllers
         [Route("healthz")]
         public string Healthz()
         {
-            return "Active";
+            return "Active success";
         }
 
         // GET: api/Records
@@ -71,8 +71,8 @@ namespace IT4483Image.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ResponseDTO>> PutRecord(long id, Record record)
         {
-            var recordOld = await _context.Records.FindAsync(id);
-            record.Id = recordOld.Id;
+
+            record.Id = record.Id;
 
             _context.Entry(record).State = EntityState.Modified;
 

@@ -21,6 +21,13 @@ namespace IT4483Image.Controllers
             _context = context;
         }
 
+        [HttpGet]
+        [Route("healthz")]
+        public string Healthz()
+        {
+            return "Active";
+        }
+
         // GET: api/Records
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Record>>> GetRecords()

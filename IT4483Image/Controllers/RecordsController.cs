@@ -26,14 +26,7 @@ namespace IT4483Image.Controllers
         [Route("healthz")]
         public string Healthz()
         {
-            return "Active success";
-        }
-
-        // GET: api/Records
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Record>>> GetRecords()
-        {
-            return await _context.Records.ToListAsync();
+            return "Active";
         }
 
         // GET: api/Records/5
@@ -54,8 +47,7 @@ namespace IT4483Image.Controllers
         [Route("search-image-video")]
         public async Task<ActionResult<ResponseDTO>> searchRecords(RecordDTO recordDTO, int skip, int take)
         {
-
-            return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => ( recordDTO.Type==null || s.Type==recordDTO.Type)
+            return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => ( recordDTO.Type==null  || s.Type==recordDTO.Type)
                                 && (recordDTO.Title == null || s.Title.Contains(recordDTO.Title))
                                 && (recordDTO.Location == null || s.Location == recordDTO.Location)
                                 && (recordDTO.Subjects == null || s.Type == recordDTO.Subjects)
@@ -71,9 +63,7 @@ namespace IT4483Image.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ResponseDTO>> PutRecord(long id, Record record)
         {
-
-            record.Id = record.Id;
-
+            record.Id = id;
             _context.Entry(record).State = EntityState.Modified;
 
             try
@@ -92,7 +82,7 @@ namespace IT4483Image.Controllers
                 }
             }
 
-            return new ResponseDTO("Update thành công",200);
+            return new ResponseDTO("Update thành công",200,record);
         }
 
         // POST: api/Records

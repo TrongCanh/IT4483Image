@@ -43,16 +43,27 @@ namespace IT4483Image.Controllers
             return record;
         }
 
+        // GET: api/Records/5
+        [HttpGet()]
+        [Route("image-traning")]
+        public async Task<ActionResult<ResponseDTO>> GetRecordTraing()
+        {
+            return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => (s.IsTraining == true)).ToArrayAsync());
+        }
+
+
         [HttpPost]
         [Route("search-image-video")]
         public async Task<ActionResult<ResponseDTO>> searchRecords(RecordDTO recordDTO, int skip, int take)
         {
             return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => ( recordDTO.Type==null  || s.Type==recordDTO.Type)
-                                && (recordDTO.Title == null || s.Title.Contains(recordDTO.Title))
-                                && (recordDTO.Location == null || s.Location == recordDTO.Location)
-                                && (recordDTO.Subjects == null || s.Type == recordDTO.Subjects)
-                                && (recordDTO.start == null || s.CreatedAt >= recordDTO.start)
-                                && (recordDTO.end == null || s.CreatedAt <= recordDTO.end)
+                                            && (recordDTO.ProblemType == null || s.ProblemType == recordDTO.ProblemType)
+                                            && (recordDTO.IsTraining == null || s.IsTraining == recordDTO.IsTraining)
+                                            && (recordDTO.Title == null || s.Title.Contains(recordDTO.Title))
+                                            && (recordDTO.Location == null || s.Location == recordDTO.Location)
+                                            && (recordDTO.MonitoredObjectId == null || s.MonitoredObjectId == recordDTO.MonitoredObjectId)
+                                            && (recordDTO.start == null || s.CreatedAt >= recordDTO.start)
+                                            && (recordDTO.end == null || s.CreatedAt <= recordDTO.end)
                                 ).Skip(skip).Take(take).ToArrayAsync());
         }
 
@@ -61,9 +72,19 @@ namespace IT4483Image.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<ActionResult<ResponseDTO>> PutRecord(long id, Record record)
+        public async Task<ActionResult<ResponseDTO>> PutRecord(long id, RecordDTO recordDTO)
         {
-            record.Id = id;
+            var record = await _context.Records.FindAsync(id);
+            record.Type = recordDTO.Type == null ? record.Type : recordDTO.Type;
+            record.Description = recordDTO.Description == null ? record.Description : recordDTO.Description;
+            record.ProblemType = recordDTO.ProblemType == null ? record.ProblemType : recordDTO.ProblemType;
+            record.IsTraining = recordDTO.IsTraining == null ? record.IsTraining : recordDTO.IsTraining;
+            record.Title = recordDTO.Title == null ? record.Title : recordDTO.Title;
+            record.Location = recordDTO.Location == null ? record.Location : recordDTO.Location;
+            record.Longitude = recordDTO.Longitude == null ? record.Longitude : recordDTO.Longitude;
+            record.Latitude = recordDTO.Latitude == null ? record.Latitude : recordDTO.Latitude;
+            record.MonitoredObjectId = recordDTO.MonitoredObjectId == null ? record.MonitoredObjectId : recordDTO.MonitoredObjectId;
+            record.MetaData = recordDTO.MetaData == null ? record.MetaData : recordDTO.MetaData;
             _context.Entry(record).State = EntityState.Modified;
 
             try
@@ -91,12 +112,15 @@ namespace IT4483Image.Controllers
         [HttpPost]
         public async Task<ActionResult<Record>> PostRecord(Record record)
         {
+            Random rd = new Random();
+            record.Description = record.Description == null ? record.Title + " ngày " + DateTime.Now.ToString("dd/mm/yyyy") : record.Description;
+            record.IsTraining = record.IsTraining == null ? rd.Next(1, 100) < 50 : record.IsTraining;
+            
             _context.Records.Add(record);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRecord", new { id = record.Id }, record);
         }
-
 
         /// <summary>
         /// Sao chép giá trị đối tượng, nếu đối tượng cần sao chép không có trường đó thì bỏ qua

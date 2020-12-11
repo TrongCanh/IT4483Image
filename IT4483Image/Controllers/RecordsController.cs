@@ -43,6 +43,40 @@ namespace IT4483Image.Controllers
             return record;
         }
 
+        [HttpGet("monitored/image/{id}")]
+        public async Task<ActionResult<ResponseDTO>> GetImageByMonitoredId(string id)
+        {
+            return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => (s.Type == 0)
+                                            && (s.MonitoredObjectId == id)
+                                ).ToArrayAsync());
+        }
+
+        [HttpGet("monitored/video/{id}")]
+        public async Task<ActionResult<ResponseDTO>> GetVideoByMonitoredId(string id)
+        {
+            return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => (s.Type == 1)
+                                            && (s.MonitoredObjectId == id)
+                                ).ToArrayAsync());
+        }
+
+
+        [HttpGet("supervisedArea/image/{id}")]
+        public async Task<ActionResult<ResponseDTO>> GetImageBySupervisedAreaId(string id)
+        {
+            return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => (s.Type == 0)
+                                            && (s.IdSupervisedArea == id)
+                                ).ToArrayAsync());
+        }
+
+        [HttpGet("supervisedArea/video/{id}")]
+        public async Task<ActionResult<ResponseDTO>> GetVideoBySupervisedAreaId(string id)
+        {
+            return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => (s.Type == 1)
+                                            && (s.IdSupervisedArea == id)
+                                ).ToArrayAsync());
+        }
+
+
         // GET: api/Records/5
         [HttpGet()]
         [Route("image-traning")]

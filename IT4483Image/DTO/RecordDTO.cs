@@ -16,7 +16,10 @@ namespace IT4483Image.DTO
         public DateTime? start { get; set; }
         public DateTime? end { get; set; }
         public string? MonitoredObjectId { get; set; }
-        public int? Location { get; set; }
+        public string? IdSupervisedArea { get; set; }
+        public string? IdDrone { get; set; }
+        public string? IdFlightPath { get; set; }
+
         public Boolean? IsTraining { get; set; }
         public string? MetaData { get; set; }
 

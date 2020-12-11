@@ -60,7 +60,9 @@ namespace IT4483Image.Controllers
                                             && (recordDTO.ProblemType == null || s.ProblemType == recordDTO.ProblemType)
                                             && (recordDTO.IsTraining == null || s.IsTraining == recordDTO.IsTraining)
                                             && (recordDTO.Title == null || s.Title.Contains(recordDTO.Title))
-                                            && (recordDTO.Location == null || s.Location == recordDTO.Location)
+                                            && (recordDTO.IdSupervisedArea == null || s.IdSupervisedArea == recordDTO.IdSupervisedArea)
+                                            && (recordDTO.IdDrone == null || s.IdDrone == recordDTO.IdDrone)
+                                            && (recordDTO.IdFlightPath == null || s.IdFlightPath == recordDTO.IdFlightPath)
                                             && (recordDTO.MonitoredObjectId == null || s.MonitoredObjectId == recordDTO.MonitoredObjectId)
                                             && (recordDTO.start == null || s.CreatedAt >= recordDTO.start)
                                             && (recordDTO.end == null || s.CreatedAt <= recordDTO.end)
@@ -80,7 +82,9 @@ namespace IT4483Image.Controllers
             record.ProblemType = recordDTO.ProblemType == null ? record.ProblemType : recordDTO.ProblemType;
             record.IsTraining = recordDTO.IsTraining == null ? record.IsTraining : recordDTO.IsTraining;
             record.Title = recordDTO.Title == null ? record.Title : recordDTO.Title;
-            record.Location = recordDTO.Location == null ? record.Location : recordDTO.Location;
+            record.IdSupervisedArea = recordDTO.IdSupervisedArea == null ? record.IdSupervisedArea : recordDTO.IdSupervisedArea;
+            record.IdDrone = recordDTO.IdDrone == null ? record.IdDrone : recordDTO.IdDrone;
+            record.IdFlightPath = recordDTO.IdFlightPath == null ? record.IdFlightPath : recordDTO.IdFlightPath;
             record.Longitude = recordDTO.Longitude == null ? record.Longitude : recordDTO.Longitude;
             record.Latitude = recordDTO.Latitude == null ? record.Latitude : recordDTO.Latitude;
             record.MonitoredObjectId = recordDTO.MonitoredObjectId == null ? record.MonitoredObjectId : recordDTO.MonitoredObjectId;
@@ -113,6 +117,7 @@ namespace IT4483Image.Controllers
         public async Task<ActionResult<Record>> PostRecord(Record record)
         {
             Random rd = new Random();
+            record.Title = record.Title != null ? record.Title : (record.Type==0?"Ảnh theo dõi ":"Video theo dõi ")+ DateTime.Now.ToString("hh:mm:ss dd/mm/yyyy");
             record.Description = record.Description == null ? record.Title + " ngày " + DateTime.Now.ToString("dd/mm/yyyy") : record.Description;
             record.IsTraining = record.IsTraining == null ? rd.Next(1, 100) < 50 : record.IsTraining;
             

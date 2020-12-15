@@ -100,7 +100,7 @@ namespace IT4483Image.Controllers
                                             && (recordDTO.MonitoredObjectId == null || s.MonitoredObjectId == recordDTO.MonitoredObjectId)
                                             && (recordDTO.start == null || s.CreatedAt >= recordDTO.start)
                                             && (recordDTO.end == null || s.CreatedAt <= recordDTO.end)
-                                ).Skip(skip).Take(take).ToArrayAsync());
+                                ).OrderByDescending(c => c.Id).Skip(skip).Take(take).ToArrayAsync());
         }
 
 

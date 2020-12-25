@@ -45,9 +45,41 @@ namespace IT4483Image.Controllers
             return Stream;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<ResponseDTO>> getStreams()
+        {
+            var projectType = HttpContext.Request.Headers["project-type"].ToString();
+            var problemType = 0;
+            switch (projectType)
+            {
+                case "CHAY_RUNG":
+                    problemType = 0;
+                    break;
+                case "DE_DIEU":
+                    problemType = 1;
+                    break;
+                case "LUOI_DIEN":
+                    problemType = 2;
+                    break;
+                case "CAY_TRONG":
+                    problemType = 3;
+                    break;
+                default:
+                    problemType = 5;
+                    break;
+            }
+
+            return new ResponseDTO("Thành công!", 200, await _context.Streams.Where(s =>
+                                             (s.ProblemType == problemType)
+                                ).OrderByDescending(c => c.Id).ToArrayAsync());
+        }
+
+
 
         [HttpGet]
-        public async Task<ActionResult<ResponseDTO>> searchStreams()
+        [Route("active")]
+
+        public async Task<ActionResult<ResponseDTO>> getActiveStreams()
         {
             var projectType = HttpContext.Request.Headers["project-type"].ToString();
             var problemType = 0;

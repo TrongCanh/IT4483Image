@@ -16,10 +16,12 @@ namespace IT4483Image.Controllers
     public class RecordsController : ControllerBase
     {
         private readonly RecordContext _context;
+        private readonly StreamContext _contextStream;
 
-        public RecordsController(RecordContext context)
+        public RecordsController(RecordContext context, StreamContext contextStream)
         {
             _context = context;
+            _contextStream = contextStream;
         }
 
         [HttpGet]
@@ -251,8 +253,8 @@ namespace IT4483Image.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        [Route("cut-stream")]
-        public async Task<ActionResult<Record>> CutStream (Record record)
+        [Route("cut-stream/{streamId}")]
+        public async Task<ActionResult<ResponseDTO>> CutStream (Record record,long streamId)
         {
             var projectType = HttpContext.Request.Headers["project-type"].ToString();
             var problemType = 0;
@@ -276,9 +278,14 @@ namespace IT4483Image.Controllers
             }
 
 
+            var recordOld = await _contextStream.Streams.FindAsync(streamId);
+            if (recordOld == null)
+            {
+                return new ResponseDTO("Không tồn tại ", 404);
+            }
             Random rd = new Random();
-            record.Title =  "Video cắt từ stream " + DateTime.Now.ToString("hh:mm:ss dd/mm/yyyy");
-            record.Description = record.Description == null ? record.Title + " ngày " + DateTime.Now.ToString("dd/mm/yyyy") : record.Description;
+            record.Title = "Video cắt gọn " + recordOld.Title;
+            record.Description = recordOld.SessionDescription;
             record.IsTraining = record.IsTraining == null ? rd.Next(1, 100) < 50 : record.IsTraining;
             record.ProblemType = problemType;
             record.Type = 1;
@@ -292,9 +299,9 @@ namespace IT4483Image.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        [Route("cut-video")]
+        [Route("cut-video/{videoId}")]
 
-        public async Task<ActionResult<Record>> CutVideo(Record record)
+        public async Task<ActionResult<ResponseDTO>> CutVideo(Record record, long videoId)
         {
             var projectType = HttpContext.Request.Headers["project-type"].ToString();
             var problemType = 0;
@@ -317,18 +324,31 @@ namespace IT4483Image.Controllers
                     break;
             }
 
-
+            var recordOld = await _context.Records.FindAsync(videoId);
+            if (recordOld == null)
+            {
+                return new ResponseDTO("Không tồn tại ", 404);
+            }
             Random rd = new Random();
-            record.Title = "Video cắt gọn " + DateTime.Now.ToString("hh:mm:ss dd/mm/yyyy");
-            record.Description = record.Description == null ? record.Title + " ngày " + DateTime.Now.ToString("dd/mm/yyyy") : record.Description;
+            record.Title = "Video cắt gọn " + recordOld.Title;
+            record.Description = recordOld.Description;
             record.IsTraining = record.IsTraining == null ? rd.Next(1, 100) < 50 : record.IsTraining;
             record.ProblemType = problemType;
             record.Type = 1;
+            record.Longitude = recordOld.Longitude;
+            record.Latitude = recordOld.Latitude;
+            record.MetaData = recordOld.MetaData;
+            record.MonitoredObjectId = recordOld.MonitoredObjectId;
+            record.IdSupervisedArea = recordOld.IdSupervisedArea;
+            record.IdDrone = recordOld.IdDrone;
+            record.IdFlightPath = recordOld.IdFlightPath;
 
             _context.Records.Add(record);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRecord", new { id = record.Id }, record);
+            CreatedAtAction("GetRecord", new { id = record.Id }, record);
+            return new ResponseDTO("Lưu thành công", 200, record);
+
         }
 
         /// <summary>

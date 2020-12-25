@@ -63,16 +63,58 @@ namespace IT4483Image.Controllers
         [HttpGet("supervisedArea/images/{id}")]
         public async Task<ActionResult<ResponseDTO>> GetImageBySupervisedAreaId(string id)
         {
+            var projectType = HttpContext.Request.Headers["project-type"].ToString();
+            var problemType = 0;
+            switch (projectType)
+            {
+                case "CHAY_RUNG":
+                    problemType = 0;
+                    break;
+                case "DE_DIEU":
+                    problemType = 1;
+                    break;
+                case "LUOI_DIEN":
+                    problemType = 2;
+                    break;
+                case "CAY_TRONG":
+                    problemType = 3;
+                    break;
+                default:
+                    problemType = 5;
+                    break;
+            }
+
             return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => (s.Type == 0)
-                                            && (s.IdSupervisedArea == id)
+                                            && (s.IdSupervisedArea == id) && (s.ProblemType == problemType)
                                 ).ToArrayAsync());
         }
 
         [HttpGet("supervisedArea/videos/{id}")]
         public async Task<ActionResult<ResponseDTO>> GetVideoBySupervisedAreaId(string id)
         {
+            var projectType = HttpContext.Request.Headers["project-type"].ToString();
+            var problemType = 0;
+            switch (projectType)
+            {
+                case "CHAY_RUNG":
+                    problemType = 0;
+                    break;
+                case "DE_DIEU":
+                    problemType = 1;
+                    break;
+                case "LUOI_DIEN":
+                    problemType = 2;
+                    break;
+                case "CAY_TRONG":
+                    problemType = 3;
+                    break;
+                default:
+                    problemType = 5;
+                    break;
+            }
+
             return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => (s.Type == 1)
-                                            && (s.IdSupervisedArea == id)
+                                            && (s.IdSupervisedArea == id) && (s.ProblemType == problemType)
                                 ).ToArrayAsync());
         }
 
@@ -90,8 +132,29 @@ namespace IT4483Image.Controllers
         [Route("search-image-video")]
         public async Task<ActionResult<ResponseDTO>> searchRecords(RecordDTO recordDTO, int skip, int take)
         {
-            return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => ( recordDTO.Type==null  || s.Type==recordDTO.Type)
-                                            && (recordDTO.ProblemType == null || s.ProblemType == recordDTO.ProblemType)
+            var projectType = HttpContext.Request.Headers["project-type"].ToString();
+            var problemType = 0;
+            switch (projectType)
+            {
+                case "CHAY_RUNG":
+                    problemType = 0;
+                    break;
+                case "DE_DIEU":
+                    problemType = 1;
+                    break;
+                case "LUOI_DIEN":
+                    problemType = 2;
+                    break;
+                case "CAY_TRONG":
+                    problemType = 3;
+                    break;
+                default:
+                    problemType = 5;
+                    break;
+            }
+
+            return new ResponseDTO("Thành công!", 200, await _context.Records.Where(s => ( recordDTO.Type==null  || s.Type==recordDTO.Type)
+                                            && (s.ProblemType == problemType)
                                             && (recordDTO.IsTraining == null || s.IsTraining == recordDTO.IsTraining)
                                             && (recordDTO.Title == null || s.Title.Contains(recordDTO.Title))
                                             && (recordDTO.IdSupervisedArea == null || s.IdSupervisedArea == recordDTO.IdSupervisedArea)
@@ -150,11 +213,118 @@ namespace IT4483Image.Controllers
         [HttpPost]
         public async Task<ActionResult<Record>> PostRecord(Record record)
         {
+            var projectType = HttpContext.Request.Headers["project-type"].ToString();
+            var problemType = 0;
+            switch (projectType)
+            {
+                case "CHAY_RUNG":
+                    problemType = 0;
+                    break;
+                case "DE_DIEU":
+                    problemType = 1;
+                    break;
+                case "LUOI_DIEN":
+                    problemType = 2;
+                    break;
+                case "CAY_TRONG":
+                    problemType = 3;
+                    break;
+                default:
+                    problemType = 5;
+                    break;
+            }
+
+
             Random rd = new Random();
-            record.Title = record.Title != null ? record.Title : (record.Type==0?"Ảnh theo dõi ":"Video theo dõi ")+ DateTime.Now.ToString("hh:mm:ss dd/mm/yyyy");
+            record.Title = record.Title != null ? record.Title : (record.Type == 0 ? "Ảnh theo dõi " : "Video theo dõi ") + DateTime.Now.ToString("hh:mm:ss dd/mm/yyyy");
             record.Description = record.Description == null ? record.Title + " ngày " + DateTime.Now.ToString("dd/mm/yyyy") : record.Description;
             record.IsTraining = record.IsTraining == null ? rd.Next(1, 100) < 50 : record.IsTraining;
-            
+            record.ProblemType = problemType;
+
+            _context.Records.Add(record);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetRecord", new { id = record.Id }, record);
+        }
+
+        // POST: api/Records
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        [Route("cut-stream")]
+        public async Task<ActionResult<Record>> CutStream (Record record)
+        {
+            var projectType = HttpContext.Request.Headers["project-type"].ToString();
+            var problemType = 0;
+            switch (projectType)
+            {
+                case "CHAY_RUNG":
+                    problemType = 0;
+                    break;
+                case "DE_DIEU":
+                    problemType = 1;
+                    break;
+                case "LUOI_DIEN":
+                    problemType = 2;
+                    break;
+                case "CAY_TRONG":
+                    problemType = 3;
+                    break;
+                default:
+                    problemType = 5;
+                    break;
+            }
+
+
+            Random rd = new Random();
+            record.Title =  "Video cắt từ stream " + DateTime.Now.ToString("hh:mm:ss dd/mm/yyyy");
+            record.Description = record.Description == null ? record.Title + " ngày " + DateTime.Now.ToString("dd/mm/yyyy") : record.Description;
+            record.IsTraining = record.IsTraining == null ? rd.Next(1, 100) < 50 : record.IsTraining;
+            record.ProblemType = problemType;
+            record.Type = 1;
+            _context.Records.Add(record);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetRecord", new { id = record.Id }, record);
+        }
+
+        // POST: api/Records
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        [Route("cut-video")]
+
+        public async Task<ActionResult<Record>> CutVideo(Record record)
+        {
+            var projectType = HttpContext.Request.Headers["project-type"].ToString();
+            var problemType = 0;
+            switch (projectType)
+            {
+                case "CHAY_RUNG":
+                    problemType = 0;
+                    break;
+                case "DE_DIEU":
+                    problemType = 1;
+                    break;
+                case "LUOI_DIEN":
+                    problemType = 2;
+                    break;
+                case "CAY_TRONG":
+                    problemType = 3;
+                    break;
+                default:
+                    problemType = 5;
+                    break;
+            }
+
+
+            Random rd = new Random();
+            record.Title = "Video cắt gọn " + DateTime.Now.ToString("hh:mm:ss dd/mm/yyyy");
+            record.Description = record.Description == null ? record.Title + " ngày " + DateTime.Now.ToString("dd/mm/yyyy") : record.Description;
+            record.IsTraining = record.IsTraining == null ? rd.Next(1, 100) < 50 : record.IsTraining;
+            record.ProblemType = problemType;
+            record.Type = 1;
+
             _context.Records.Add(record);
             await _context.SaveChangesAsync();
 

@@ -24,6 +24,7 @@ namespace IT4483Image.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedAt { get; set; }
         public string MetaData { get; set; }
+        public string VideoId { get; set; }
 
     }
 }

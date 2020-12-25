@@ -29,6 +29,9 @@ namespace IT4483Image
             services.AddDbContextPool<RecordContext>(
                options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")
             ));
+            services.AddDbContextPool<StreamContext>(
+               options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")
+            ));
             services.AddControllers();
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {

@@ -59,6 +59,13 @@ namespace IT4483Image.Controllers
                                 ).ToArrayAsync());
         }
 
+        [HttpGet("monitored/{id}")]
+        public async Task<ActionResult<ResponseDTO>> GetRecordsByMonitoredId(string id)
+        {
+            return new ResponseDTO("Thành công", 200, await _context.Records.Where(s =>  (s.MonitoredObjectId == id)
+                                ).ToArrayAsync());
+        }
+
 
         [HttpGet("supervisedArea/images/{id}")]
         public async Task<ActionResult<ResponseDTO>> GetImageBySupervisedAreaId(string id)

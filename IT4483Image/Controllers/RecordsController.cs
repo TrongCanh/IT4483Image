@@ -26,7 +26,7 @@ namespace IT4483Image.Controllers
         [Route("healthz")]
         public string Healthz()
         {
-            return "Active";
+            return "Active123";
         }
 
         // GET: api/Records/5

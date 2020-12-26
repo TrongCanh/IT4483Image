@@ -88,8 +88,11 @@ namespace IT4483Image.Controllers
                 case "CAY_TRONG":
                     problemType = 3;
                     break;
+                case "ALL_PROJECT":
+                    problemType = 4;
+                    break;
                 default:
-                    problemType = 5;
+                    problemType = -1;
                     break;
             }
 
@@ -117,13 +120,16 @@ namespace IT4483Image.Controllers
                 case "CAY_TRONG":
                     problemType = 3;
                     break;
+                case "ALL_PROJECT":
+                    problemType = 4;
+                    break;
                 default:
-                    problemType = 5;
+                    problemType = -1;
                     break;
             }
 
             return new ResponseDTO("Thành công", 200, await _context.Records.Where(s => (s.Type == 1)
-                                            && (s.IdSupervisedArea == id) && (s.ProblemType == problemType)
+                                            && (s.IdSupervisedArea == id) && (problemType ==4|| s.ProblemType == problemType)
                                 ).ToArrayAsync());
         }
 
@@ -157,13 +163,16 @@ namespace IT4483Image.Controllers
                 case "CAY_TRONG":
                     problemType = 3;
                     break;
+                case "ALL_PROJECT":
+                    problemType = 4;
+                    break;
                 default:
-                    problemType = 5;
+                    problemType = -1;
                     break;
             }
 
             return new ResponseDTO("Thành công!", 200, await _context.Records.Where(s => ( recordDTO.Type==null  || s.Type==recordDTO.Type)
-                                            && (s.ProblemType == problemType)
+                                            && (problemType == 4 || s.ProblemType == problemType)
                                             && (recordDTO.IsTraining == null || s.IsTraining == recordDTO.IsTraining)
                                             && (recordDTO.Title == null || s.Title.Contains(recordDTO.Title))
                                             && (recordDTO.IdSupervisedArea == null || s.IdSupervisedArea == recordDTO.IdSupervisedArea)
@@ -238,8 +247,11 @@ namespace IT4483Image.Controllers
                 case "CAY_TRONG":
                     problemType = 3;
                     break;
+                case "ALL_PROJECT":
+                    problemType = 4;
+                    break;
                 default:
-                    problemType = 5;
+                    problemType = -1;
                     break;
             }
 
@@ -279,8 +291,11 @@ namespace IT4483Image.Controllers
                 case "CAY_TRONG":
                     problemType = 3;
                     break;
+                case "ALL_PROJECT":
+                    problemType = 4;
+                    break;
                 default:
-                    problemType = 5;
+                    problemType = -1;
                     break;
             }
 
@@ -326,8 +341,11 @@ namespace IT4483Image.Controllers
                 case "CAY_TRONG":
                     problemType = 3;
                     break;
+                case "ALL_PROJECT":
+                    problemType = 4;
+                    break;
                 default:
-                    problemType = 5;
+                    problemType = -1;
                     break;
             }
 

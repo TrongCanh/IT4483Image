@@ -172,7 +172,7 @@ namespace IT4483Image.Controllers
             }
 
             return new ResponseDTO("Thành công!", 200, await _context.Records.Where(s => ( recordDTO.Type==null  || s.Type==recordDTO.Type)
-                                            && (problemType == 4 || s.ProblemType == problemType)
+                                            && (problemType == 4 ? s.ProblemType == recordDTO.ProblemType: s.ProblemType == problemType)
                                             && (recordDTO.IsTraining == null || s.IsTraining == recordDTO.IsTraining)
                                             && (recordDTO.Title == null || s.Title.Contains(recordDTO.Title))
                                             && (recordDTO.IdSupervisedArea == null || s.IdSupervisedArea == recordDTO.IdSupervisedArea)

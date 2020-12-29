@@ -10,16 +10,25 @@ namespace IT4483Image.DTO
         public string message { get; set; }
         public int status { get; set; }
         public object result { get; set; }
-        public ResponseDTO(string messageDTO, int statusDTO, object dataDTO)
+        public int total { get; set; }
+
+        public ResponseDTO(string message, int status, object result, int total)
         {
-            message = messageDTO;
-            status = statusDTO;
-            result = dataDTO;
+            this.message = message;
+            this.status = status;
+            this.result = result;
+            this.total = total;
         }
-        public ResponseDTO(string messageDTO, int statusDTO)
+        public ResponseDTO(string message, int status, object result)
         {
-            message = messageDTO;
-            status = statusDTO;
+            this.message = message;
+            this.status = status;
+            this.result = result;
+        }
+        public ResponseDTO(string message, int status)
+        {
+            this.message = message;
+            this.status = status;
         }
     }
 }

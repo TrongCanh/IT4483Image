@@ -145,7 +145,7 @@ namespace IT4483Image.Controllers
 
         [HttpPost]
         [Route("search-image-video")]
-        public async Task<ActionResult<ResponseDTO>> searchRecords(RecordDTO recordDTO, int skip, int take)
+        public async Task<ActionResult<ResponseDTO>> searchRecords(RecordDTO recordDTO, int skip, int take, int page, int pageSize)
         {
             var projectType = HttpContext.Request.Headers["project-type"].ToString();
             var problemType = 0;
@@ -170,9 +170,8 @@ namespace IT4483Image.Controllers
                     problemType = -1;
                     break;
             }
-
-            return new ResponseDTO("Thành công!", 200, await _context.Records.Where(s => ( recordDTO.Type==null  || s.Type==recordDTO.Type)
-                                            && (problemType == 4 ? (recordDTO.ProblemType==null||s.ProblemType == recordDTO.ProblemType): s.ProblemType == problemType)
+            var result = _context.Records.Where(s => (recordDTO.Type == null || s.Type == recordDTO.Type)
+                                            && (problemType == 4 ? (recordDTO.ProblemType == null || s.ProblemType == recordDTO.ProblemType) : s.ProblemType == problemType)
                                             && (recordDTO.IsTraining == null || s.IsTraining == recordDTO.IsTraining)
                                             && (recordDTO.Title == null || s.Title.Contains(recordDTO.Title))
                                             && (recordDTO.IdSupervisedArea == null || s.IdSupervisedArea == recordDTO.IdSupervisedArea)
@@ -181,7 +180,8 @@ namespace IT4483Image.Controllers
                                             && (recordDTO.MonitoredObjectId == null || s.MonitoredObjectId == recordDTO.MonitoredObjectId)
                                             && (recordDTO.start == null || s.CreatedAt >= recordDTO.start)
                                             && (recordDTO.end == null || s.CreatedAt <= recordDTO.end)
-                                ).OrderByDescending(c => c.Id).Skip(skip).Take(take).ToArrayAsync());
+                                );
+            return new ResponseDTO("Thành công!", 200, await result.OrderByDescending(c => c.Id).Skip(take == 0 ? page : skip).Take(take == 0 ? pageSize : take).ToArrayAsync(), result.Count()) ;
         }
 
 

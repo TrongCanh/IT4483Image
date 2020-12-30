@@ -176,12 +176,13 @@ namespace IT4483Image.Controllers
                                             && (recordDTO.Title == null || s.Title.Contains(recordDTO.Title))
                                             && (recordDTO.IdSupervisedArea == null || s.IdSupervisedArea == recordDTO.IdSupervisedArea)
                                             && (recordDTO.IdDrone == null || s.IdDrone == recordDTO.IdDrone)
+                                            && (recordDTO.IdCampaign == null || s.IdCampaign == recordDTO.IdCampaign)
                                             && (recordDTO.IdFlightPath == null || s.IdFlightPath == recordDTO.IdFlightPath)
                                             && (recordDTO.MonitoredObjectId == null || s.MonitoredObjectId == recordDTO.MonitoredObjectId)
                                             && (recordDTO.start == null || s.CreatedAt >= recordDTO.start)
                                             && (recordDTO.end == null || s.CreatedAt <= recordDTO.end)
                                 );
-            return new ResponseDTO("Thành công!", 200, await result.OrderByDescending(c => c.Id).Skip(take == 0 ? page : skip).Take(take == 0 ? pageSize : take).ToArrayAsync(), result.Count()) ;
+            return new ResponseDTO("Thành công!", 200, await result.OrderByDescending(c => c.Id).Skip(take == 0 ? page* pageSize : skip* take).Take(take == 0 ? pageSize : take).ToArrayAsync(), result.Count()) ;
         }
 
 
@@ -197,8 +198,9 @@ namespace IT4483Image.Controllers
             record.ProblemType = recordDTO.ProblemType == null ? record.ProblemType : recordDTO.ProblemType;
             record.IsTraining = recordDTO.IsTraining == null ? record.IsTraining : recordDTO.IsTraining;
             record.Title = recordDTO.Title == null ? record.Title : recordDTO.Title;
-            record.IdSupervisedArea = recordDTO.IdSupervisedArea == null ? record.IdSupervisedArea : recordDTO.IdSupervisedArea;
+            record.IdSupervisedArea = recordDTO.IdSupervisedArea == null ? record.IdSupervisedArea : recordDTO.IdSupervisedArea; 
             record.IdDrone = recordDTO.IdDrone == null ? record.IdDrone : recordDTO.IdDrone;
+            record.IdCampaign = recordDTO.IdCampaign == null ? record.IdCampaign : recordDTO.IdCampaign;
             record.IdFlightPath = recordDTO.IdFlightPath == null ? record.IdFlightPath : recordDTO.IdFlightPath;
             record.Longitude = recordDTO.Longitude == null ? record.Longitude : recordDTO.Longitude;
             record.Latitude = recordDTO.Latitude == null ? record.Latitude : recordDTO.Latitude;
@@ -364,8 +366,9 @@ namespace IT4483Image.Controllers
             record.Latitude = recordOld.Latitude;
             record.MetaData = recordOld.MetaData;
             record.MonitoredObjectId = recordOld.MonitoredObjectId;
-            record.IdSupervisedArea = recordOld.IdSupervisedArea;
+            record.IdSupervisedArea = recordOld.IdSupervisedArea; 
             record.IdDrone = recordOld.IdDrone;
+            record.IdCampaign = recordOld.IdCampaign;
             record.IdFlightPath = recordOld.IdFlightPath;
 
             _context.Records.Add(record);

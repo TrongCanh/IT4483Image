@@ -19,6 +19,7 @@ namespace IT4483Image.DTO
         public string? IdSupervisedArea { get; set; }
         public string? IdDrone { get; set; }
         public string? IdFlightPath { get; set; }
+        public string? IdCampaign { get; set; }
 
         public Boolean? IsTraining { get; set; }
         public string? MetaData { get; set; }

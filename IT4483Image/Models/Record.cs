@@ -21,6 +21,7 @@ namespace IT4483Image.Models
         public string? IdSupervisedArea { get; set; }
         public string? IdDrone { get; set; }
         public string? IdFlightPath { get; set; }
+        public string? IdCampaign { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedAt { get; set; }
         public string MetaData { get; set; }
